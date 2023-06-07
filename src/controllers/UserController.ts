@@ -1,14 +1,7 @@
 import { Request, Response } from 'express';
 import argon2 from 'argon2';
 import { addMinutes, isBefore, parseISO, formatDistanceToNow } from 'date-fns';
-import {
-  addUser,
-  getUserByEmail,
-  getUserByID,
-  updateBalance,
-  calculateProfit,
-  sortProfit,
-} from '../models/UserModel';
+import { addUser, getUserByEmail } from '../models/UserModel';
 import { parseDatabaseError } from '../utils/db-utils';
 
 async function registerUser(req: Request, res: Response): Promise<void> {
@@ -74,7 +67,7 @@ async function logIn(req: Request, res: Response): Promise<void> {
     email: user.email,
   };
   req.session.isLoggedIn = true;
-  res.redirect(`crypto`);
+  res.redirect(`/mainPage`);
 }
 
 async function logOut(req: Request, res: Response): Promise<void> {
@@ -83,45 +76,4 @@ async function logOut(req: Request, res: Response): Promise<void> {
   res.redirect('/login');
 }
 
-async function addBalance(req: Request, res: Response): Promise<void> {
-  const { userId } = req.session.authenticatedUser;
-  const user = await getUserByID(userId);
-
-  if (!user) {
-    res.sendStatus(404); // 404 Not Found (403 Forbidden would also make a lot of sense here)
-    return;
-  }
-
-  await updateBalance(user);
-
-  res.render('balancePage', { user });
-}
-
-async function calcProfit(req: Request, res: Response): Promise<void> {
-  const { userId } = req.session.authenticatedUser;
-  const user = await getUserByID(userId);
-
-  if (!user) {
-    res.sendStatus(404); // 404 Not Found (403 Forbidden would also make a lot of sense here)
-    return;
-  }
-
-  await calculateProfit(user);
-
-  res.render('profitPage', { user });
-}
-
-async function sortedProfit(req: Request, res: Response): Promise<void> {
-  const { userId } = req.session.authenticatedUser;
-  const user = await getUserByID(userId);
-
-  if (!user) {
-    res.sendStatus(404); // 404 Not Found (403 Forbidden would also make a lot of sense here)
-    return;
-  }
-
-  const users = await sortProfit(user);
-  res.render('leaderBoard', { users });
-}
-
-export { registerUser, logIn, logOut, addBalance, calcProfit, sortedProfit };
+export { registerUser, logIn, logOut };
