@@ -1,6 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Relation } from 'typeorm';
-import { Transaction } from './Transaction';
-import { CryptoCurrency } from './CryptoCurrency';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity()
 export class User {
@@ -21,14 +19,4 @@ export class User {
 
   @Column({ default: 0 })
   profit: number;
-
-  @OneToMany(() => Transaction, (transaction) => transaction.user, {
-    cascade: ['insert', 'update'],
-  })
-  transactions: Relation<Transaction>[];
-
-  @OneToMany(() => CryptoCurrency, (cryptocurrency) => cryptocurrency.user, {
-    cascade: ['insert', 'update'],
-  })
-  cryptoCurrencies: Relation<CryptoCurrency>[];
 }
